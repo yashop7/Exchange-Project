@@ -119,7 +119,6 @@ function fillOrder(
         }
         if (bookWithQuantity.asks[price] === 0) {
           //If Quantity is Zero, then we will remove that Point from the OrderBook Object
-          
           console.log("---------------------------------------------");
           console.log("bookWithQuantity.asks[price]: ", bookWithQuantity.asks[price]);
           console.log("bookWithQuantity.asks: ", bookWithQuantity.asks);
