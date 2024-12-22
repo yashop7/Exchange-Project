@@ -415,6 +415,7 @@ function CryptoTable({ data }: { data: CombinedCryptoData[] | null }) {
       <tbody className="">
         {data
           ?.sort((a, b) => b.market_cap - a.market_cap)
+          .slice(0, -5)
           .filter((item) => !item.symbol.toLowerCase().includes("usdc"))
           .map((item, index) => {
             //Now we have to Take each Item and Match the data from the Table and then
