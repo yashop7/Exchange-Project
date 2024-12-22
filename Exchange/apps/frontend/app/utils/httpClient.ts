@@ -5,9 +5,9 @@ const BASE_URL = "https://api.backpack.exchange/api/v1";
 export async function getTicker(market: string): Promise<Ticker> {
     const tickers = await getTickers();
     const ticker = tickers.find((t : Ticker) => t.symbol === market);
-    if (!ticker) {
-        throw new Error(`No ticker found for ${market}`);
-    }
+    // if (!ticker) {
+    //     throw new Error(`No ticker found for ${market}`);
+    // }
     return ticker;
 }
 

@@ -69,7 +69,7 @@ export const MarketBar = ({ market }: { market: string }) => {
 
   return (
     <div>
-      <div className="flex items-center flex-row relative w-full overflow-hidden border-b text-white border-slate-800 p-1">
+      <div className="flex items-center flex-row relative w-full overflow-hidden border-b text-white border-neutral-800 p-1">
         <div className="flex items-center justify-between flex-row no-scrollbar overflow-auto pr-4">
           <TickerButton market={market} tokenImage={tokenImage} />
           <div className="flex items-center flex-row space-x-8 pl-4">
@@ -137,7 +137,6 @@ export const MarketBar = ({ market }: { market: string }) => {
 };
 
 function TickerButton({ market, tokenImage }: { market: string, tokenImage: string | null }) {
-  console.log("TickerButton: ", market);
   return (
 
     <div className="flex h-[60px] shrink-0 space-x-4 rounded-full m-1 bg-blue-200 bg-opacity-10  ">

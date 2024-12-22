@@ -10,11 +10,35 @@ import {
 import { BidTable } from "./BidTable";
 import { AskTable } from "./AskTable";
 import { SignalingManager } from "@/app/utils/SignalingManager";
+import { motion } from "framer-motion";
+
 
 export function Depth({ market }: { market: string }) {
   const [bids, setBids] = useState<[string, string][]>();
   const [asks, setAsks] = useState<[string, string][]>();
   const [price, setPrice] = useState<string>();
+
+  let cumulativeBidVolume = 0;
+  const bidCumulative = (bids || []).slice(0,20).map(([price, volume]) => {
+    cumulativeBidVolume += parseFloat(volume);
+    return cumulativeBidVolume; // Return cumulative volume at this level
+  });
+
+  let cumulativeAskVolume = 0;
+  const askCumulative = (asks || []).slice(0,20).map(([price, volume]) => {
+    cumulativeAskVolume += parseFloat(volume);
+    return cumulativeAskVolume; // Return cumulative volume at this level
+  });
+
+  // Step 2: Get the highest cumulative volumes
+  const totalBidVolume = bidCumulative[bidCumulative.length - 1]; // Last cumulative bid volume
+  const totalAskVolume = askCumulative[askCumulative.length - 1]; // Last cumulative ask volume
+  const totalVolume = totalBidVolume + totalAskVolume;
+
+  // Step 3: Calculate percentages
+  const bidPercentage = (totalBidVolume / totalVolume) * 100;
+  const askPercentage = (totalAskVolume / totalVolume) * 100;
+
 
   useEffect(() => {
     SignalingManager.getInstance().registerCallback(
@@ -78,9 +102,7 @@ export function Depth({ market }: { market: string }) {
 
     getDepth(market).then((d) => {
       setBids(d.bids);
-      console.log("d.bids.reverse(): ", d.bids.reverse());
       setAsks(d.asks);
-      console.log("d.asks: ", d.asks);
     });
     getTicker(market).then((t) => setPrice(t.lastPrice));
     getTrades(market).then((t) => setPrice(t[0].price));
@@ -103,12 +125,20 @@ export function Depth({ market }: { market: string }) {
       <div className="flex flex-col h-[calc(100%-30px)] overflow-hidden overflow-y-scroll no-scrollbar">
         {asks && <AskTable asks={asks} />}
 
-        <div className="text-xl py-2">{price}</div>
+        <div
+          className={`text-lg ml-1 py-2 tracking-wider ${
+            bidPercentage > askPercentage
+              ? "text-[rgba(0,194,120,.9)]"
+              : "text-[rgba(253,75,78,.9)]"
+          }`}
+        >
+            {price && parseFloat(price).toLocaleString()}
+        </div>
 
         {bids && <BidTable bids={bids} />}
       </div>
       <div className="px-2 py-2">
-        <PercentageBar bids={bids || []} asks={asks || []} />
+        <PercentageBar bidPercentage={bidPercentage} askPercentage={askPercentage} />
       </div>
     </div>
   );
@@ -125,68 +155,45 @@ function TableHeader() {
 }
 
 const PercentageBar = ({
-  bids,
-  asks,
+  bidPercentage,
+  askPercentage,
 }: {
-  bids: [string, string][];
-  asks: [string, string][];
+  bidPercentage: number;
+  askPercentage: number;
 }) => {
-
-
-  let cumulativeBidVolume = 0;
-  const bidCumulative = bids.slice(0,20).map(([price, volume]) => {
-    cumulativeBidVolume += parseFloat(volume);
-    return cumulativeBidVolume; // Return cumulative volume at this level
-  });
-
-  let cumulativeAskVolume = 0;
-  const askCumulative = asks.slice(0,20).map(([price, volume]) => {
-    cumulativeAskVolume += parseFloat(volume);
-    return cumulativeAskVolume; // Return cumulative volume at this level
-  });
-
-  // Step 2: Get the highest cumulative volumes
-  const totalBidVolume = bidCumulative[bidCumulative.length - 1]; // Last cumulative bid volume
-  const totalAskVolume = askCumulative[askCumulative.length - 1]; // Last cumulative ask volume
-  const totalVolume = totalBidVolume + totalAskVolume;
-
-  // Step 3: Calculate percentages
-  const bidPercentage = (totalBidVolume / totalVolume) * 100;
-  const askPercentage = (totalAskVolume / totalVolume) * 100;
-
-
-
   return (
     <div className="w-full">
       <div className="flex h-8 relative">
         {/* Bid side with angled edge */}
-        <div
-          className="bg-greenBackgroundTransparent  rounded-md flex items-center justify-start px-4 relative"
+        <motion.div
+          className="bg-greenBackgroundTransparent rounded-l-md flex items-center justify-start px-4 relative"
           style={{
-            width: `${bidPercentage}%`,
             clipPath: "polygon(0 0, 100% 0, calc(100% - 10px) 100%, 0 100%)",
           }}
+          initial={{ width: 0 }}
+          animate={{ width: `${bidPercentage}%` }}
+          transition={{ duration: 1 }}
         >
           <span className="text-[rgba(0,194,120,.9)] text-sm">
             {Math.floor(bidPercentage)}%
           </span>
-        </div>
+        </motion.div>
 
         {/* Ask side with angled edge */}
-        <div
-          className="bg-redBackgroundTransparent rounded-md  flex items-center justify-end px-4 relative"
+        <motion.div
+          className="bg-redBackgroundTransparent rounded-r-md flex items-center justify-end px-4 relative"
           style={{
-            width: `${askPercentage}%`,
             clipPath: "polygon(10px 0, 100% 0, 100% 100%, 0 100%)",
           }}
+          initial={{ width: 0 }}
+          animate={{ width: `${askPercentage}%` }}
+          transition={{ duration: 1 }}
         >
           <span className="text-[rgba(253,75,78,.9)] text-sm">
             {Math.floor(askPercentage)}%
           </span>
-        </div>
+        </motion.div>
       </div>
-
-      {/* Market dominance indicator */}
     </div>
   );
 };

@@ -17,6 +17,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CombineData, CombinedCryptoData } from "../utils/combine-data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { get } from "http";
 
 export interface CurrencyData {
   price: number;
@@ -173,25 +174,47 @@ export default function Component() {
   )
   };
 
+  const getNewListings = (data: CryptoData[]): CryptoData[] => {
+    return data
+      .sort((a, b) => 
+        new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime()
+      )
+      .slice(0, 5);
+  };
+  
+  // Function to get top gainers (middle panel)
+  const getTopGainers = (data: CryptoData[]): CryptoData[] => {
+    return data
+      .filter(coin => !Number.isNaN(coin.price_change_percentage_24h))
+      .sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h)
+      .slice(0, 5);
+  };
+  
+  // Function to get popular coins (right panel)
+  const getPopularCoins = (data: CryptoData[]): CryptoData[] => {
+    // Based on the image, we should prioritize major coins like BTC, ETH, SOL
+    const popularSymbols = ['SOL', 'ETH', 'BTC', 'WEN', 'DRIFT'];
+    
+    return data
+      .filter(coin => popularSymbols.includes(coin.symbol.toUpperCase()))
+      .sort((a, b) => {
+        const aIndex = popularSymbols.indexOf(a.symbol.toUpperCase());
+        const bIndex = popularSymbols.indexOf(b.symbol.toUpperCase());
+        return aIndex - bIndex;
+      });
+  };
+  
+  
+  
+
   // Sorting for most popular based on market cap rank (descending)
-  const mostPopular = data
-    .sort((a, b) => b.market_cap_rank - a.market_cap_rank)
-    .slice(0, 5);
+  const mostPopular = getPopularCoins(data);
 
   // Sorting for top gainer based on 24h price change percentage (descending)
-  const topGainer = data
-    .sort(
-      (a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h
-    )
-    .slice(0, 5);
+  const topGainer = getTopGainers(data);
 
   // Finding newest entry based on `last_updated` (you may also use createdAt if available)
-  const newEntries = data
-    .sort(
-      (a, b) =>
-        new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime()
-    )
-    .slice(0, 5);
+  const newEntries = getNewListings(data);
 
   return (
     <div className="bg-[#121212] text-white min-h-screen p-4 tracking-widest">
@@ -320,32 +343,31 @@ function CryptoList({ items }: { items: CryptoData[] }) {
                 />
               </motion.div>
               <div>
-                <h3 className="font-medium">{crypto.name}</h3>
-                <p className="text-sm text-neutral-500 uppercase">{crypto.symbol}</p>
+                <h3 className="font-medium uppercase">{crypto.symbol}</h3>
               </div>
             </motion.div>
 
             <motion.div className="flex items-center gap-6">
               <div className="text-right">
-                <div className="font-medium">
-                  {formatCurrency(crypto.current_price)}
-                </div>
-                <motion.div
-                  initial={{ scale: 0.9 }}
-                  animate={{ scale: 1 }}
-                  className={`flex items-center gap-1 text-sm ${
-                    crypto.price_change_percentage_24h >= 0
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {crypto.price_change_percentage_24h >= 0 ? (
-                    <TrendingUp className="w-4 h-4" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4" />
-                  )}
-                  {formatPercentage(crypto.price_change_percentage_24h)}
-                </motion.div>
+              <div className="font-medium">
+                {formatCurrency(crypto.current_price)}
+              </div>
+              <motion.div
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                className={`flex justify-end gap-1 text-sm ${
+                crypto.price_change_percentage_24h >= 0
+                  ? "text-green-600"
+                  : "text-red-600"
+                }`}
+              >
+                {crypto.price_change_percentage_24h >= 0 ? (
+                <TrendingUp className="w-4 h-4" />
+                ) : (
+                <TrendingDown className="w-4 h-4" />
+                )}
+                {formatPercentage(crypto.price_change_percentage_24h)}
+              </motion.div>
               </div>
             </motion.div>
           </div>
@@ -727,7 +749,7 @@ const CryptoLineChart = ({ data, color }: any) => {
     if (!chartContainerRef.current) return;
 
     const chart = createChart(chartContainerRef.current, {
-      height: 50,
+      height: 30,
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "#14161f",
