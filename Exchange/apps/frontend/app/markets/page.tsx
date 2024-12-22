@@ -76,6 +76,7 @@ export interface LineCryptoData {
 export default function Component() {
   const [data, setData] = useState<CombinedCryptoData[] | null>(null);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -85,7 +86,6 @@ export default function Component() {
         console.error("Error fetching data:", error);
       }
     };
-
     // Initial fetch
     fetchData();
     // Poll every 10 seconds
@@ -101,13 +101,9 @@ export default function Component() {
       <div className="bg-[#121212] text-white min-h-screen p-4 tracking-widest">
           <div className="max-w-7xl mx-auto">
               {/* Carousel Skeleton */}
-              <div className="relative bg-blue-900/10 rounded-xl overflow-hidden mb-6 h-80">
-                  <div className="p-8 space-y-4">
-                      <div className="flex justify-between items-center mb-4">
-                          <Skeleton className="h-8 w-8 rounded-full bg-neutral-700" />
-                          <Skeleton className="h-8 w-8 rounded-full bg-neutral-700" />
-                      </div>
-                      <Skeleton className="h-10 w-3/4 bg-neutral-700" />
+              <div className="relative bg-blue-900/10 rounded-xl w-full  overflow-hidden mb-6 h-80">
+                  <div className="p-8 space-y-4  absolute  bottom-1">
+                      <Skeleton className="h-10 w-full bg-neutral-700" />
                       <Skeleton className="h-6 w-1/2 bg-neutral-700" />
                       <div className="flex space-x-4">
                           <Skeleton className="h-10 w-32 rounded-lg bg-neutral-700" />
@@ -448,9 +444,8 @@ function CryptoTableRow({
 
   return (
     <motion.tr
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      // initial={{ opacity: 0, y: 20 }}
+      // animate={{ opacity: 1, y: 0 }}
       whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.05)" }}
       className="border-b border-neutral-800 p-3 group font-medium text-lg hover:rounded-xl transition-all cursor-pointer"
       onClick={() =>
@@ -736,6 +731,9 @@ const CryptoLineChart = ({ data, color }: any) => {
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
         textColor: "#14161f",
+      },
+      watermark: {
+        visible: false,
       },
       rightPriceScale: {
         visible: false,
