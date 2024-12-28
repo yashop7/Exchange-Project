@@ -3,13 +3,13 @@ import { Router, Request, Response } from "express";
 import { RedisManager } from "../RedisManager";
 
 const pgClient = new Client({
-    user: 'neondb_owner', // Username from the connection string
-    host: 'ep-orange-credit-a5ep13qy.us-east-2.aws.neon.tech', // Host from the connection string
-    database: 'neondb', // Database name from the connection string
-    password: 'JgF8CiBhjla9', // Password from the connection string
-    port: 5432, // Default PostgreSQL port
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: parseInt(process.env.DB_PORT || '5432'),
     ssl: {
-        rejectUnauthorized: false // SSL mode is required in your connection string
+        rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true'
     }
 });
 
