@@ -23,7 +23,6 @@ export class SubscriptionManager {
     if (this.subscriptions.get(userId)?.includes(subscription)) {
       return;
     }
-
     this.subscriptions.set(
       userId,
       (this.subscriptions.get(userId) || []).concat(subscription)
@@ -34,6 +33,7 @@ export class SubscriptionManager {
     );
     //To check is this the First User which is Subscribing to the market
     if (this.reverseSubscriptions.get(subscription)?.length === 1) {
+      console.log("subscribing to ", subscription);
       this.redisClient.subscribe(subscription, this.redisCallbackHandler);
       // means that the whole server (or the Redis client used by the server)
       //is subscribing to the subscription (channel/stream) on Redis, not the individual user.
@@ -43,6 +43,7 @@ export class SubscriptionManager {
   private redisCallbackHandler = (message: string, channel: string) => {
     console.log("HELLO I AM CALLED");
     const parsedMessage = JSON.parse(message);
+    console.log("parsedMessage: ", parsedMessage);
     this.reverseSubscriptions
       .get(channel)
       ?.forEach((s) =>

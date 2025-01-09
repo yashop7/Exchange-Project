@@ -14,7 +14,6 @@ export class User {
         this.addListeners();
     }
 
-
     public subscribe(subscription: string) {
         this.subscriptions.push(subscription);
     }
@@ -24,6 +23,7 @@ export class User {
     }
 
     emit(message: OutgoingMessage) {
+        console.log("message: ", message);
         this.ws.send(JSON.stringify(message)); //This Message will reach Frontend
     }
 

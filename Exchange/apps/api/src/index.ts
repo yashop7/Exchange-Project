@@ -17,6 +17,10 @@ app.use("/api/v1/klines", klineRouter);
 app.use("/api/v1/tickers", tickersRouter);
 
 
+app.get("/as", (req , res) => {
+    res.send("Hello World");
+});
+
 app.listen(3003, () => {
     console.log("Server is running on port 3003");
 });

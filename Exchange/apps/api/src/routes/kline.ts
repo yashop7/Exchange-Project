@@ -1,25 +1,19 @@
 import { Client } from 'pg';
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import { RedisManager } from "../RedisManager";
 
 const pgClient = new Client({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME,
-    password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT || '5432'),
-    ssl: {
-        rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED === 'true'
-    }
+    user: "your_user",
+    host: "localhost",
+    database: "my_database",
+    password: "your_password",
+    port: 5433,
 });
-
 pgClient.connect();
 
 export const klineRouter = Router();
 
-//@ts-ignore
-klineRouter.get("/", async (req: Request, res: Response) => {
-    
+klineRouter.get("/", async (req, res) => {
     const { market, interval, startTime, endTime } = req.query;
 
     let query;
@@ -49,7 +43,7 @@ klineRouter.get("/", async (req: Request, res: Response) => {
             quoteVolume: x.quoteVolume,
             start: x.start,
             trades: x.trades,
-            volume: x.volume, //This is a Base Asset Volume
+            volume: x.volume,
         })));
     } catch (err) {
         console.log(err);
