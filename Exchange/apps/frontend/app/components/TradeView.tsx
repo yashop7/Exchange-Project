@@ -23,7 +23,7 @@ export function TradeView({
         if (chartManagerRef.current) {
           chartManagerRef.current.destroy();
         }
-
+        console.log(klineData)
         const chartManager = new ChartManager(
           chartRef.current,
           [
@@ -49,7 +49,7 @@ export function TradeView({
 
   return (
     <>
-      <div  ref={chartRef} style={{ height: "75vh", width: "100%", marginTop: 4 }}></div>
+      <div className="font-mono"  ref={chartRef} style={{ height: "75vh", width: "100%", marginTop: 4 }}></div>
     </>
   );
 }

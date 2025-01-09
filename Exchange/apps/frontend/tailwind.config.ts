@@ -10,11 +10,13 @@ const config: Config = {
   theme: {
   	extend: {
   		colors: {
-  			greenBackgroundTransparent: 'rgba(0, 194, 120, 0.08)',
+			darkblue: '#121212',
+  			greenBackgroundTransparent: 'rgba(0,194,120,.12)',
   			redBackgroundTransparent: 'rgba(234,56,59,.12)',
   			baseBackgroundL2: 'rgb(32,33,39)',
   			baseBackgroundL3: 'rgb(32,33,39)',
   			greenPrimaryButtonBackground: 'rgb(0,194,120)',
+  			baseBackgroundL1: 'rgb(20,21,27)',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {
@@ -62,7 +64,8 @@ const config: Config = {
   			baseBorderMed: '#cccccc',
   			accentBlue: 'rgb(76,148,255)',
   			baseBorderLight: 'rgb(32,33,39)',
-  			baseTextHighEmphasis: 'rgb(244,244,246)'
+  			baseTextHighEmphasis: 'rgb(244,244,246)',
+			darkblue: '#121212'
   		},
   		backgroundImage: {
   			'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

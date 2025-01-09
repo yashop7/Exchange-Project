@@ -1,5 +1,6 @@
 "use client";
 import { MarketBar } from "@/app/components/MarketBar";
+import { OrderTable } from "@/app/components/OrderTable";
 import { SwapUI } from "@/app/components/SwapUI";
 import { TradeView } from "@/app/components/TradeView";
 import { Depth } from "@/app/components/depth/Depth";
@@ -12,7 +13,7 @@ export default function Page() {
     const market = segments[segments.length - 1];
 
     return (
-        <div className="flex flex-col lg:flex-row w-full h-full">
+        <div className="flex flex-col font-mono lg:flex-row w-full h-full">
             <div className="flex flex-col lg:w-3/4 h-full">
             {/* MarketBar at the top */}
             <div className="w-full">
@@ -35,12 +36,17 @@ export default function Page() {
             <div className="border-t lg:border-t-0 lg:border-l border-neutral-800" />
             </div>
             </div>
+            <div>
+                <OrderTable />
+            </div>
             </div>
 
             {/* SwapUI at the bottom on mobile, right on larger screens */}
             <div className="lg:w-1/4 overflow-auto lg:order-none order-last">
             <SwapUI market={market as string} />
             </div>
+
+
         </div>
     );
 }

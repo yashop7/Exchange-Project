@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "start": "WITH_SNAPSHOT=true node dist/index.js",
     "dev": "npm run build && WITH_SNAPSHOT=true npm run start",
     "test": "vitest"

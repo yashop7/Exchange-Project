@@ -1,9 +1,9 @@
 import { Ticker } from "./types";
 
-export const BASE_URL = "wss://ws.backpack.exchange/"
+// export const BASE_URL = "wss://ws.backpack.exchange/"
+export const BASE_URL = "ws://localhost:3001"
 
 export class SignalingManager {
-    
     private ws: WebSocket;
     private static instance: SignalingManager;
     private bufferedMessages: any[] = [];
@@ -11,16 +11,15 @@ export class SignalingManager {
     private id: number;
     private initialized: boolean = false;
 
-    private constructor() { //We can't Directly Call the class or make a Object
-        //We have to call the getInstance() to make a Object as soon as it is get called
+    private constructor() {
         this.ws = new WebSocket(BASE_URL);
         this.bufferedMessages = [];
         this.id = 1;
-        this.init(); //We have called this function Now it will listen for the WS EVENTS
+        this.init();
     }
 
+
     public static getInstance() {
-        //This function will get called and this will make the Instance inside the class
         if (!this.instance)  {
             this.instance = new SignalingManager();
         }
@@ -30,43 +29,94 @@ export class SignalingManager {
     init() {
         this.ws.onopen = () => {
             this.initialized = true;
-            this.bufferedMessages.forEach(message => { //if there are Buffered Messages we will iterate over it and execute on them
+            this.bufferedMessages.forEach(message => {
                 this.ws.send(JSON.stringify(message));
             });
             this.bufferedMessages = [];
         }
-
-        //On this the message/data will be send by the Server, as you will Subscribe to the Particular Market
-        // data will be in the form of
-        // {
-        //     "data": {
-        //       "e": "ticker",   // Event type: "ticker"
-        //       "c": "50000",    // Last price: 50000 USD //Closing Price
-        //       "h": "51000",    // High price: 51000 USD
-        //       "l": "49000",    // Low price: 49000 USD
-        //       "v": "1500",     // Volume: 1500 BTC
-        //       "V": "75000000", // Quote volume: 75,000,000 USD
-        //       "s": "BTC-USD"   // Symbol: BTC-USD
-        //     }
-        //   }
-          
         this.ws.onmessage = (event) => {
+            //THESE ARE THE EVENT PUSHED BY THE PUBSUB
+
+//TICKER-UPDATES
+            // export type TickerUpdateMessage = {
+            //     stream: string, 
+            //     data: {
+            //         c?: string,
+            //         h?: string,
+            //         l?: string,
+            //         v?: string,
+            //         V?: string,
+            //         s?: string,
+            //         id: number,
+            //         e: "ticker"
+            //     }
+
+//TRADE-UPDATES
+            // RedisManager.getInstance().publishMessage(`trade@${market}`, {
+            //     stream: `trade@${market}`,
+            //     data: {
+            //         e: "trade", //This is event
+            //         t: fill.tradeId,
+            //         m: fill.otherUserId === userId, // TODO: Is this right? isBuyerMaker True or False
+            //         p: fill.price,
+            //         q: fill.qty.toString(),
+            //         s: market,
+            //     }
+            // });
+
+//DEPTH-UPDATES
+            // if (side === "buy") {
+            //     //Asks which are Updated will be Published
+                        //we are checking every Entry of the asks Table and checking if it is present in the fills Array
+            //     const updatedAsks = depth?.asks.filter(x => fills.map(f => f.price).includes(x[0].toString()));
+            //     const updatedBid = depth?.bids.find(x => x[0] === price);
+            //     console.log("publish ws depth updates");
+            //     RedisManager.getInstance().publishMessage(`depth.200ms.${market}`, {
+            //         stream: `depth.200ms.${market}`,
+            //         data: {
+            //             a: updatedAsks,
+            //             b: updatedBid ? [updatedBid] : [],
+            //             e: "depth"
+            //         }
+            //     });
+            // }
+            // if (side === "sell") {
+            //    const updatedBids = depth?.bids.filter(x => fills.map(f => f.price).includes(x[0].toString()));
+            //    const updatedAsk = depth?.asks.find(x => x[0] === price);
+            //    console.log("publish ws depth updates")
+            //    RedisManager.getInstance().publishMessage(`depth.200ms.${market}`, {
+            //        stream: `depth.200ms.${market}`,
+            //        data: {
+            //            a: updatedAsk ? [updatedAsk] : [],
+            //            b: updatedBids,
+            //            e: "depth"
+            //        }
+            //    });
+            // }
+
+
+            console.log("event: ", event);
             const message = JSON.parse(event.data);
+            console.log("message: ", message);
             const type = message.data.e;
+            console.log("message.stream: ", message.stream);
             if (this.callbacks[type]) {
-                this.callbacks[type].forEach(({ callback } : {callback : any}) => {
+                this.callbacks[type].forEach(({ callback  } : {callback : any}) => {
+                    // console.log("Bhai Ticker Toh aa rahi hai")
                     if (type === "ticker") {
                         const newTicker: Partial<Ticker> = {
                             lastPrice: message.data.c,
                             high: message.data.h,
                             low: message.data.l,
-                            volume: message.data.v, //BaseAsset BTC
-                            quoteVolume: message.data.V, //QuoteAsset USDC
+                            volume: message.data.v,
+                            quoteVolume: message.data.V,
                             symbol: message.data.s,
                         }
+                        console.log(newTicker);
                         callback(newTicker);
                    }
                    if (type === "depth") {
+                    // console.log("Bhai Depth Toh aa rahi hai")
                         // const newTicker: Partial<Ticker> = {
                         //     lastPrice: message.data.c,
                         //     high: message.data.h,
@@ -79,7 +129,18 @@ export class SignalingManager {
                         // callback(newTicker);
                         const updatedBids = message.data.b;
                         const updatedAsks = message.data.a;
-                        callback({ bids: updatedBids , asks: updatedAsks });
+                        callback({ bids: updatedBids, asks: updatedAsks });
+                    }
+                    if(type === "trade") {
+                        // console.log("Bhai Trade Toh aa rahi hai")
+                        const newTrade = {
+                            tradeId: message.data.t,
+                            isBuyerMaker: message.data.m,
+                            price: message.data.p,
+                            quantity: message.data.q,
+                            symbol: message.data.s
+                        }
+                        callback(newTrade);
                     }
                 });
             }
@@ -91,28 +152,24 @@ export class SignalingManager {
             ...message,
             id: this.id++
         }
-        if (!this.initialized) { 
-            //If someone has send the message 
-            // and the connection is not established then we will save the message into the buffer
+        if (!this.initialized) {
             this.bufferedMessages.push(messageToSend);
             return;
         }
         this.ws.send(JSON.stringify(messageToSend));
     }
 
-    async registerCallback(type: string, callback: any, id: string) { //Callback is a Funciton that is to be Executed
-        this.callbacks[type] = this.callbacks[type] || []; //If it Exists then OK , if not we have initialised it with []
+    async registerCallback(type: string, callback: any, id: string) {
+        this.callbacks[type] = this.callbacks[type] || [];
         this.callbacks[type].push({ callback, id });
         // "ticker" => callback
     }
 
-    // .deRegisterCallback("ticker", `TICKER-${market}`);
-    // .deRegisterCallback("depth", `DEPTH-${market}`);
     async deRegisterCallback(type: string, id: string) {
         if (this.callbacks[type]) {
             const index = this.callbacks[type].findIndex((callback: { id: string; }) => callback.id === id);
             if (index !== -1) {
-                this.callbacks[type].splice(index, 1); //removing that Thing from Array
+                this.callbacks[type].splice(index, 1);
             }
         }
     }

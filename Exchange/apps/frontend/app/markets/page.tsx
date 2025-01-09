@@ -82,6 +82,7 @@ export default function Component() {
     const fetchData = async () => {
       try {
         const res = (await CombineData()) ?? null;
+        console.log("res: ", res);
         setData(res);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -217,7 +218,7 @@ export default function Component() {
   const newEntries = getNewListings(data);
 
   return (
-    <div className="bg-[#121212] text-white min-h-screen p-4 tracking-widest">
+    <div className="bg-[#121212] font-mono text-white min-h-screen p-4 tracking-widest">
       <div className="max-w-7xl mx-auto">
         {/* <div className="relative bg-[#1c1c1c] rounded-xl overflow-hidden mb-6 pt-32">
           <div className="absolute inset-0">
@@ -548,13 +549,13 @@ function CryptoTableRow({
 
 const carouselItems = [
   {
-    src: "/backpack-smoke.webp",
+    src: "/backpack-smoke copy.webp",
     title: "US Election Prediction Markets",
     description: "Predict the outcome by trading the outcome tokens.",
     buttons: [{ text: "Manage Referrals", link: "#" }],
   },
   {
-    src: "/trumpharris.webp",
+    src: "/trumpharris copy.webp",
     title: "Another Market",
     description: "Trade the outcome tokens for another market.",
     buttons: [
@@ -563,7 +564,7 @@ const carouselItems = [
     ],
   },
   {
-    src: "/home-banner.webp",
+    src: "/home-banner copy.webp",
     title: "Yet Another Market",
     description: "Trade the outcome tokens for yet another market.",
     buttons: [{ text: "Trade Now", link: "#" }],

@@ -147,7 +147,7 @@ function TickerButton({ market, tokenImage }: { market: string, tokenImage: stri
           decoding="async"
           data-nimg="1"
           className="z-10 rounded-full h-6 w-6 mt-4 outline-baseBackgroundL1"
-          src={tokenImage || ""}
+          src={market === "TATA_INR" ? "/TATA.png" : tokenImage || "/sol copy.webp"}
         />
         <img
           alt="USDC Logo"
@@ -155,7 +155,7 @@ function TickerButton({ market, tokenImage }: { market: string, tokenImage: stri
           decoding="async"
           data-nimg="1"
           className="h-6 w-6 -ml-2 mt-4 rounded-full"
-          src="/usdc.webp"
+          src="/usdc copy.webp"
         />
       </div>
       <button type="button" className="react-aria-Button" data-rac="">
