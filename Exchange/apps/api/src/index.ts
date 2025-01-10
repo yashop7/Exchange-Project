@@ -5,7 +5,7 @@ import { depthRouter } from "./routes/depth";
 import { tradesRouter } from "./routes/trades";
 import { klineRouter } from "./routes/kline";
 import { tickersRouter } from "./routes/ticker";
-
+const PORT = process.env.PORT || 3003;
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -21,6 +21,8 @@ app.get("/as", (req , res) => {
     res.send("Hello World");
 });
 
-app.listen(3003, () => {
-    console.log("Server is running on port 3003");
-});
+app.listen(PORT, () => {
+    console.log(`API Server running on port ${PORT}`);
+  });
+  
+  
