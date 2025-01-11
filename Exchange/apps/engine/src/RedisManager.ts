@@ -44,6 +44,9 @@ export class RedisManager {
     }
   
     public pushMessage(message: DbMessage) { //This is here we are Pushing into the Queue which is reaching the DB
+        console.log("----------------------------------");
+        console.log("Sending this Message to DB: ", message);
+        console.log("----------------------------------");
         this.client.lPush("db_processor", JSON.stringify(message));
     }
 

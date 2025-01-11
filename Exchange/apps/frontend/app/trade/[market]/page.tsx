@@ -30,7 +30,7 @@ export default function Page() {
 
             {/* Right half split between Depth and SwapUI */}
             <div className="lg:w-1/3 flex flex-col lg:flex-row h-full">
-            <div className="flex-1 p-1 overflow-auto" style={{ maxHeight: "75vh" }}>
+            <div className="flex-1 p-1 overflow-auto no-scrollbar" style={{ maxHeight: "75vh" }}>
                 <Depth market={market as string} />
             </div>
             <div className="border-t lg:border-t-0 lg:border-l border-neutral-800" />

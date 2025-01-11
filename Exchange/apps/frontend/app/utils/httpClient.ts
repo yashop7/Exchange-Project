@@ -54,36 +54,36 @@ export async function getTrades(market: string): Promise<Trade[]> {
 // https://api.backpack.exchange/api/v1/klines?symbol=SOL_USDC&interval=1h&startTime=1729523712&endTime=1730128512
 
 
-// export async function getKlines(market: string, interval: string, startTime: number, endTime: number): Promise<KLine[]> {
-//     const response = await axios.get(`${BASE_URL}/klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`);
-//     const data: KLine[] = response.data;
-//     console.log("data: ", data);
-//     return data.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
+export async function getKlines(market: string, interval: string, startTime: number, endTime: number): Promise<KLine[]> {
+    const response = await axios.get(`${BASE_URL}/klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`);
+    const data: KLine[] = response.data;
+    console.log("data: ", data);
+    return data.sort((x, y) => (Number(x.end) < Number(y.end) ? -1 : 1));
+}
+
+// export async function getKlines(market: string, interval: string, startTime: number, endTime: number) {
+//     try {
+//         const response = await fetch(`/api/v1/klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`);
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+//         const result = await response.json();
+//         return result;
+//     } catch (err) {
+//         console.error('Error:', err);
+//     }
+
 // }
+// export async function getMarketKlines( startTime: number, endTime: number) {
+//     try {
+//         const response = await fetch(`https://api.backpack.exchange/wapi/v1/marketDataKlines?interval=6h&startTime=${startTime}&endTime=${endTime}`);
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+//         const result = await response.json();
+//         return result;
+//     } catch (err) {
+//         console.error('Error:', err);
+//     }
 
-export async function getKlines(market: string, interval: string, startTime: number, endTime: number) {
-    try {
-        const response = await fetch(`/api/v1/klines?symbol=${market}&interval=${interval}&startTime=${startTime}&endTime=${endTime}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        return result;
-    } catch (err) {
-        console.error('Error:', err);
-    }
-
-}
-export async function getMarketKlines( startTime: number, endTime: number) {
-    try {
-        const response = await fetch(`https://api.backpack.exchange/wapi/v1/marketDataKlines?interval=6h&startTime=${startTime}&endTime=${endTime}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const result = await response.json();
-        return result;
-    } catch (err) {
-        console.error('Error:', err);
-    }
-
-}
+// }
