@@ -16,13 +16,10 @@ app.use("/api/v1/trades", tradesRouter);
 app.use("/api/v1/klines", klineRouter);
 app.use("/api/v1/tickers", tickersRouter);
 
-
-app.get("/as", (req , res) => {
-    res.send("Hello World");
+app.get("/as", (req, res) => {
+  res.send("Hello World");
 });
 
 app.listen(PORT, () => {
-    console.log(`API Server running on port ${PORT}`);
-  });
-  
-  
+  console.log(`API Server running on port ${PORT}`);
+});
